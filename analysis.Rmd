@@ -1,0 +1,107 @@
+---
+title: "starwater"
+author: "Madeline Gorchels"
+date: "3/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Load Packages
+```{r}
+library(janitor)
+library(tidyverse)
+```
+
+##Reading in CSV
+```{r}
+star = read_csv("example.csv") %>% 
+  clean_names()
+```
+
+## Initial Analysis
+
+```{r}
+star_a = star %>% 
+  mutate(production=al_well_1+al_well_2+al_well_3+al_well_4+post_reservoir_meter+canyon_lake) %>% 
+  mutate(date=as.Date(date)) %>% 
+  mutate(wur=wur_well_1+wur_well_2+wur_well_3+wur_well_4+wur_well_5+wur_well_6) %>% 
+  mutate(asp = al_well_1+al_well_2+al_well_3+al_well_4)
+
+sum(star_a$production)
+```
+
+```{r}
+production_polt = ggplot(star_a)+
+  geom_line(aes(x=date, y=production))+
+  theme_classic()+
+  xlab("Days")+
+  ylab("Production(MG)")+
+  scale_y_continuous(expand = c(0,0))
+
+
+production_polt
+```
+
+```{r}
+wur_polt = ggplot(star_a)+
+  geom_line(aes(x=date, y=wur_well_1), color="blue")+
+  geom_line(aes(x=date, y=wur_well_2), color="red")+
+  geom_line(aes(x=date, y=wur_well_3), color="green")+
+  geom_line(aes(x=date, y=wur_well_4), color="cornflowerblue")+
+  geom_line(aes(x=date, y=wur_well_5), color="pink")+
+  geom_line(aes(x=date, y=wur_well_6), color="orange")+
+  theme_classic()+
+  xlab("Days")+
+  ylab("Production(MG)")+
+  scale_y_continuous(expand = c(0,0))
+
+
+wur_polt
+```
+
+```{r}
+asp_polt = ggplot(star_a)+
+  geom_line(aes(x=date, y=al_well_1), color="blue")+
+  geom_line(aes(x=date, y=al_well_2), color="red")+
+  geom_line(aes(x=date, y=al_well_3), color="green")+
+  geom_line(aes(x=date, y=al_well_4), color="orchid")+
+  theme_classic()+
+  xlab("Days")+
+  ylab("Production(MG)")+
+  scale_y_continuous(expand = c(0,0))
+
+
+asp_polt
+```
+
+```{r}
+comp_polt = ggplot(star_a)+
+  geom_line(aes(x=date, y=wur), color="blue")+
+  geom_line(aes(x=date, y=post_reservoir_meter), color="red")+
+  theme_classic()+
+  xlab("Days")+
+  ylab("Production(MG)")+
+  scale_y_continuous(expand = c(0,0))
+
+
+comp_polt
+```
+
+```{r}
+all_polt = ggplot(star_a)+
+  geom_line(aes(x=date, y=wur), color="blue")+
+  geom_line(aes(x=date, y=post_reservoir_meter), color="red")+
+  geom_line(aes(x=date, y=canyon_lake), color="orchid")+
+  geom_line(aes(x=date, y=asp), color="green")+
+  theme_classic()+
+  xlab("Days")+
+  ylab("Production(MG)")+
+  scale_y_continuous(expand = c(0,0))
+
+
+all_polt
+```
+
