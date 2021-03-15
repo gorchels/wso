@@ -1,0 +1,40 @@
+---
+title: "Testing Code"
+author: "Madeline Gorchels"
+date: "3/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+
+```{r}
+utility <- read_csv("StarUtility/data/example.csv") %>% 
+  clean_names() %>% 
+  mutate(production=wur_well_1+wur_well_2+wur_well_3+wur_well_4+wur_well_5+wur_well_6+al_well_1+al_well_2+al_well_3+al_well_4+post_reservoir_meter+canyon_lake) %>% 
+  mutate(date=as.Date(date)) %>% 
+  mutate(wur=wur_well_1+wur_well_2+wur_well_3+wur_well_4+wur_well_5+wur_well_6) %>% 
+  mutate(asp = al_well_1+al_well_2+al_well_3+al_well_4)
+```
+
+
+
+```{r}
+
+ggplot(utility, aes(x = date))+
+        geom_line(aes(y=production))+
+       # scale_fill_manual(limits = c("m", "w"), values = c("royalblue4", "darkolivegreen4"), name = "Student Gender Preference", labels = c("Man", "Woman")) +
+        theme_classic() +
+        scale_y_continuous(expand = c(0,0), limits = c(45,200), breaks = seq(45,200, by = 10)) +
+        scale_x_date(breaks = as.Date(c("2012-01-01", "2012-04-01", "2012-07-01", "2012-10-01", "2012-12-31"))) +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+        labs(x = "Date", y = "Production (MG)") 
+
+```
