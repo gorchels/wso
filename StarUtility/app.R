@@ -35,12 +35,11 @@ ui <- fluidPage(
              tabPanel("Summary",
                       h2("What does this App explore?"),
                       p("The MESM class of 2020 is 70% women and 30% men. Does this lead to 70% participation by women and 30% by men? Our app explores how gender affects participation in Bren core classes in the Fall of 2018. We visualize changes in participation by gender as the quarter progresses, estimate the probabilty of women and men participating under different circumstances, and calculate probabilities of different gender identities being called on based on the professor's gender."),
-                      mainPanel(
                         img(src= "star_smaller.png", align = "center")
                       )
                       
-             )
-  ),
+             ),
+  
 #)
              
              tabPanel("Daily Participation",
@@ -52,9 +51,9 @@ ui <- fluidPage(
                                          start = "2012-01-01",
                                          end = "2012-12-31",
                                          min = "2012-01-01",
-                                         max = "2012-12-31")))),
+                                         max = "2012-12-31"))),
                    #       ),
-                    #      checkboxGroupInput("Gender_time", 
+                    #      checkboxGroupInput("time", 
                      #                        label = "Select Student Gender Preference",
                       #                       choices = list("Man" = "m", "Woman" = "w"),
                        #                      selected = "m"
@@ -67,7 +66,7 @@ ui <- fluidPage(
                         )
                       #)
                       
-             )
+             ))
 
 server <- function(input, output) {
   
@@ -75,16 +74,15 @@ server <- function(input, output) {
   datareact_time <- reactive({
     utility %>% 
       mutate(date = mdy(date))
-      #select(date, student_g_p, class) %>% 
-      #filter(date >= input$date_range[1], date <= input$date_range[2]) %>% 
-      #filter(student_g_p == input$Gender_time[1]| student_g_p == input$Gender_time[2])
+      select(date, production) %>% 
+      filter(date >= input$date_range[1], date <= input$date_range[2]) 
   })
   
   # time series panel
   output$time_plot <- renderPlot(
     {
       ggplot(datareact_time(), aes(x = date, y=production))+
-        geom_bar() +
+        geom_line() +
        # scale_fill_manual(limits = c("m", "w"), values = c("royalblue4", "darkolivegreen4"), name = "Student Gender Preference", labels = c("Man", "Woman")) +
         theme_classic() +
         scale_y_continuous(expand = c(0,0), limits = c(0,80), breaks = seq(0,80, by = 5)) +
