@@ -13,3 +13,7 @@ shinyApp(
   server = function(input, output) {
   }
 )
+
+#to deploy app:
+#library(rsconnect)
+#rsconnect::deployApp()
