@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(janitor)
 library(tidyverse)
+library(RColorBrewer)
 ```
 
 #   {.tabset}
@@ -48,6 +49,8 @@ star_a = star %>%
 sum(star_a$production)
 ```
 
+###The overall production for the Star Water Utility in 2012 was 15,612 million gallons. 
+
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 production_polt = ggplot(star_a)+
   geom_line(aes(x=date, y=production))+
@@ -57,83 +60,139 @@ production_polt = ggplot(star_a)+
                                   family="Garamond"))+
   xlab("Days")+
   ylab("Production(MG)")+
-  scale_y_continuous(expand = c(0,0), limits = c(30,100), breaks = seq(30,100, by = 10))+
+  scale_y_continuous(expand = c(0,0), limits = c(30,100), breaks = seq(30,100, by = 10))#+
   #scale_y_continuous(expand = c(0,0), breaks = seq(40,140, by = 10))+
-  scale_x_date(expand = c(0,0), breaks=as.Date(c("2012-01-01", "2012-04-01", "2012-07-01", "2012-10-01","2021-12-31")))
+  #scale_x_date(expand = c(0,0), breaks=as.Date(c("2012-01-01", "2012-04-01", "2012-07-01", "2012-10-01","2021-12-31")))
 
 
 production_polt
 ```
+```{r, include=FALSE}
+wursbach=star_a %>% 
+  select(date, wur_well_1, wur_well_2, wur_well_3, wur_well_4, wur_well_5, wur_well_6) 
+
+wursbach_tidy = gather(wursbach, key = date, value = Production, 
+      wur_well_1, wur_well_2, wur_well_3, wur_well_4, wur_well_5, wur_well_6)
+```
+
+## Individual Production
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+colors_all <- c("#76b5c5","#e28743","#1e81b0")
+
+all_polt = ggplot(star_a, aes(x=date))+
+  #geom_line(aes(x=date, y=wur), color="#1e81b0")+
+  geom_line(aes(y=post_reservoir_meter,color="Wursbach Reservoir"))+
+  geom_line(aes(y=canyon_lake, color="Canyon Lake"))+
+  geom_line(aes(y=asp,color="Aspen Lane Well Field"))+
+  theme_classic()+
+  theme(text=element_text(size=14,
+                                  family="Garamond"))+
+  scale_y_continuous(expand = c(0,0))+
+  labs(x="Days", 
+       y="Production(MG)", 
+       color="Legend")+
+  scale_color_manual(values = colors_all)
+
+
+all_polt
+```
 
 ## Wurzbach 
+
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-wur_polt = ggplot(star_a)+
-  geom_line(aes(x=date, y=wur_well_1), color="blue")+
-  geom_line(aes(x=date, y=wur_well_2), color="red")+
-  geom_line(aes(x=date, y=wur_well_3), color="green")+
-  geom_line(aes(x=date, y=wur_well_4), color="cornflowerblue")+
-  geom_line(aes(x=date, y=wur_well_5), color="pink")+
-  geom_line(aes(x=date, y=wur_well_6), color="orange")+
+colors_comp = c("#1e81b0", "#E2E062")
+comp_polt = ggplot(star_a)+
+  geom_line(aes(x=date, y=wur, color="Wursbach Well Field"))+
+  geom_line(aes(x=date, y=post_reservoir_meter, color="Wursbach Reservoir"))+
   theme_classic()+
   xlab("Days")+
   ylab("Production(MG)")+
   theme(text=element_text(size=14,
                                   family="Garamond"))+
-  scale_y_continuous(expand = c(0,0))
+  scale_y_continuous(expand = c(0,0))+
+  labs(x="Days", 
+       y="Production(MG)", 
+       color="Legend")+
+  scale_color_manual(values = colors_comp)
+
+
+comp_polt
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+colors_wur= c("#E2E062","#92C467","#52A26F","#277D6D","#1D585E","#203542")
+
+wur_polt = ggplot(star_a)+
+  geom_line(aes(x=date, y=wur_well_1, color="Well 1"))+
+  geom_line(aes(x=date, y=wur_well_2, color="Well 2"))+
+  geom_line(aes(x=date, y=wur_well_3, color="Well 3"))+
+  geom_line(aes(x=date, y=wur_well_4, color="Well 4"))+
+  geom_line(aes(x=date, y=wur_well_5, color="Well 5"))+
+  geom_line(aes(x=date, y=wur_well_6, color="Well 6"))+
+  theme_classic()+
+  xlab("Days")+
+  ylab("Production(MG)")+
+  theme(text=element_text(size=14,
+                                  family="Garamond"))+
+  scale_y_continuous(expand = c(0,0))+
+     labs(x="Days", 
+       y="Production(MG)", 
+       color="Legend")+
+  scale_color_manual(values = colors_wur)
 
 
 wur_polt
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-comp_polt = ggplot(star_a)+
-  geom_line(aes(x=date, y=wur), color="blue")+
-  geom_line(aes(x=date, y=post_reservoir_meter), color="red")+
+colors_w4= "#277D6D"
+
+wur4_polt = ggplot(star_a)+
+  geom_line(aes(x=date, y=wur_well_4, color="Well 4"))+
   theme_classic()+
   xlab("Days")+
   ylab("Production(MG)")+
   theme(text=element_text(size=14,
                                   family="Garamond"))+
-  scale_y_continuous(expand = c(0,0))
+  scale_y_continuous(expand = c(0,0))+
+     labs(x="Days", 
+       y="Production(MG)", 
+       color="Legend")+
+  scale_color_manual(values = colors_w4)
 
 
-comp_polt
+wur4_polt
 ```
+
 
 ## Aspen Lane
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+colors_asp = c("#43CCCD","#36A3A7","#297B80","#1C565B")
 asp_polt = ggplot(star_a)+
-  geom_line(aes(x=date, y=al_well_1), color="blue")+
-  geom_line(aes(x=date, y=al_well_2), color="red")+
-  geom_line(aes(x=date, y=al_well_3), color="green")+
-  geom_line(aes(x=date, y=al_well_4), color="orchid")+
+  geom_line(aes(x=date, y=al_well_1, color="Well 1"))+
+  geom_line(aes(x=date, y=al_well_2, color="Well 2"))+
+  geom_line(aes(x=date, y=al_well_3, color="Well 3"))+
+  geom_line(aes(x=date, y=al_well_4, color="Well 4"))+
   theme_classic()+
   xlab("Days")+
   ylab("Production(MG)")+
   theme(text=element_text(size=14,
                                   family="Garamond"))+
-  scale_y_continuous(expand = c(0,0))
+  scale_y_continuous(expand = c(0,0))+
+   labs(x="Days", 
+       y="Production(MG)", 
+       color="Legend")+
+  scale_color_manual(values = colors_asp)
 
 
 asp_polt
 ```
 
-
-## Individual Production
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-all_polt = ggplot(star_a)+
-  geom_line(aes(x=date, y=wur), color="blue")+
-  geom_line(aes(x=date, y=post_reservoir_meter), color="red")+
-  geom_line(aes(x=date, y=canyon_lake), color="orchid")+
-  geom_line(aes(x=date, y=asp), color="green")+
-  theme_classic()+
-  xlab("Days")+
-  ylab("Production(MG)")+
-  theme(text=element_text(size=14,
-                                  family="Garamond"))+
-  scale_y_continuous(expand = c(0,0))
+## Insights and Questions
 
 
-all_polt
-```
+
 
